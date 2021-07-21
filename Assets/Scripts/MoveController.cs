@@ -10,8 +10,11 @@ public class MoveController : MonoBehaviour
     float moveSpeed = 1.0f;
     private Rigidbody2D rigidBody;
     private Vector2 inputAxis;
-    [SerializeField]
-    public FixedJoystick joystick;
+
+    [SerializeField] private string RightMoveKey = "D";
+    [SerializeField] private string LeftMoveKey = "A";
+    [SerializeField] private string UpperMoveKey = "W";
+    [SerializeField] private string LowerMoveKey = "S";
 
     void Start()
     {
@@ -23,8 +26,13 @@ public class MoveController : MonoBehaviour
     void Update()
     {
         // x,ｙの入力値を得る
-        inputAxis.x = joystick.Horizontal;
-        inputAxis.y = joystick.Vertical;
+        GetInput();                                
+    }
+
+    private void GetInput()
+    {
+        inputAxis.x = Input.GetAxis("Horizontal");
+        inputAxis.y = Input.GetAxis("Vertical");
     }
 
     private void FixedUpdate()
