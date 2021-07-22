@@ -3,19 +3,19 @@ using System.Drawing;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-//ステージ番号とプレイヤーの初期位置の管理
+
+//ステージ番号とプレイヤーの初期位置の管理クラス
 
 public class StageManager : MonoBehaviour
 {
-    //初期位置配列(配列の要素数＝StageNameの数)
+    //初期位置配列(StageNum * 2 + StairDirection =　ステージごとの階段前の座標)
     private int[][] firstPositions = new int[4][]
     {
-        new int[]{-7, -6},
+        new int[]{-7, -5},
         new int[]{8, 6},
         new int[]{7, 5},
         new int[]{2, 3}
     };
-        
 
     public enum StageName
     {
@@ -23,7 +23,6 @@ public class StageManager : MonoBehaviour
         Floor2 = 1,
         None
     }
-
     public enum StairDirection
     {
         Up = 1,
@@ -32,12 +31,14 @@ public class StageManager : MonoBehaviour
 
     private StageName stage;
     private StairDirection stair;
+    public StageName Stage() { return this.stage; }
+
 
     //インスタンス
     public static StageManager instance;
 
     //インスタンスを作成(シングルトン)
-    void Awake()
+    private void Awake()
     {
         if (instance == null)
         {

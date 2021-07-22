@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//モブのアニメーション用クラス
 [RequireComponent(typeof(Animator))]
 public class AnimationStateController : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class AnimationStateController : MonoBehaviour
         SetStateToAnimator();
     }
 
+    //歩行アニメーション条件に速度を代入
     private void SetStateToAnimator()
     {
         velocity = rigidBody.velocity;
