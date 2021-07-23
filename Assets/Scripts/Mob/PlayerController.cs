@@ -13,6 +13,16 @@ public class PlayerController : MobState
     private int friendNum; //パーティー内での順番
     private int firstHp;   //初期HP
 
+    //プレイヤーキャラが向いている方向
+    private enum PointerDirection
+    {
+        Right,
+        Left,
+        Up,
+        Down
+    }
+
+
     void Start()
     {
         rigidBody = GetComponent<Rigidbody2D>();
@@ -50,7 +60,7 @@ public class PlayerController : MobState
     {
         if (canAttack)
         {
-
+            
         }
     }
     public override void Attacked(int damageValue)
