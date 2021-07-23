@@ -4,8 +4,9 @@
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MobState
 {
+    //動き用の変数
     [SerializeField]
-    float moveSpeed = 1.0f;
+    readonly float moveSpeed = 1.0f;
     private Rigidbody2D rigidBody;
     private Vector2 inputAxis;
 
@@ -15,13 +16,16 @@ public class PlayerController : MobState
     void Start()
     {
         rigidBody = GetComponent<Rigidbody2D>();
-        // 衝突時にobjectを回転させない設定
+        // 衝突時にobjectを回転させない設定(スクリプトに書いてなくてもいい)
         rigidBody.constraints = RigidbodyConstraints2D.FreezeRotation;
         //ステージの初期座標を取得
         SetFirstPosition(StageManager.instance.GetFirstPosition());
 
-        Hp = firstHp = 250;
         canAttack = true;
+
+        //HPをセット<後から変更>
+        //ステージ跨ぎする場合の処理を，PartyManagerで実装
+        Hp = firstHp = 250;
         friendNum =  GameManager.instance.AddToFriendStateList(this, true);
         ShowHp();
     }
@@ -49,21 +53,23 @@ public class PlayerController : MobState
 
         }
     }
-    public override void Damaged(int damageValue)
+    public override void Attacked(int damageValue)
     {
         int damageCut = 0;//ステータスから取得
         int damage = damageValue - damageCut;
         if(damage > 0)
         {
+            state = State.Damaged;
             Hp = (Hp - damage);
             ShowHp();
         }
     }
-    //HPのUIを更新
+
+    //HPのUIを更新(後で削除するかも)
     void ShowHp()
     {
         string hpText = Hp.ToString() + " / " + firstHp.ToString();
-        MenuUI.instance.SetHpUi(friendNum, hpText);
+        UiManager.instance.SetHpUi(friendNum, hpText);
     }
 
     //ステージでの初期位置を設定

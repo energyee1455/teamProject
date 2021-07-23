@@ -1,13 +1,40 @@
 using UnityEngine;
+using System.Collections.Generic;
+using System;
 
-//装備データクラス(予定)
-public class EquipmentData
+//?????f?[?^?N???X(?\??)
+public class EquipmentData:MonoBehaviour
 {
-    public enum Data
+    public enum WeaponName
     {
-        Buki1,
-        Buki2,
-        Buki3,
-        Buki4
+        Buki1 = 0,
+        Buki2 = 1,
+        Buki3 = 2,
+        Buki4 = 3
     }
+
+    //???????(?????????)???
+    //??
+    [Serializable] //???????????????
+    public struct Weapon
+    {
+        public Sprite iconImage;
+        public int damageValue;
+        public float attackSpace;
+        public float coolTime;
+        public int energyComsumption;
+        public int maxEnergy;
+    }
+    //??
+    public struct Armor
+    {
+        public Sprite iconImage;
+        public int damageCutValue;
+    }
+
+    //???????
+    public Weapon[] weaponsArray;
+    //???????
+    public Armor[] armorsArray;
+
 }

@@ -2,18 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//ƒ_ƒ[ƒWƒ}ƒbƒv‚ÌÀ‘•
-//ƒ_ƒ[ƒW‚ğ—^‚¦‚éÀ‘•ƒTƒ“ƒvƒ‹
+//ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’ä¸ãˆã‚‹ãƒãƒƒãƒ—ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+//ãƒ€ãƒ¡ãƒ¼ã‚¸å‡¦ç†ã®ã‚µãƒ³ãƒ—ãƒ«
 public class DamageMap : MonoBehaviour
 {
-    //—^‚¦‚éƒ_ƒ[ƒW
+    //ãƒ€ãƒ¡ãƒ¼ã‚¸é‡
     public int damageValue = 10;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            collision.gameObject.GetComponent<MobState>().Damaged(damageValue);
+            collision.gameObject.GetComponent<MobState>().Attacked(damageValue);
         }
     }
 }

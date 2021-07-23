@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-//メニューUIを変更
-public class MenuUI : MonoBehaviour
+//UI???
+public class UiManager : MonoBehaviour
 {
-    public static MenuUI instance;
+    public static UiManager instance;
 
-    public Text stageName;//ステージの名前
+    public Text stageName;//?X?e?[?W?????O
 
-    //HPのUIテキスト
+    //HP????(????)
     public List<Text> hpText = new List<Text>();
 
+    //????????
     private void Awake()
     {
         if (instance == null)
@@ -24,11 +25,11 @@ public class MenuUI : MonoBehaviour
 
     private void Start()
     {
+        //????????
         stageName.text = StageManager.instance.Stage().ToString();
-
     }
 
-    //HPをUIテキストに反映
+    //HP???
     public void SetHpUi(int num, string hp)
     {
         hpText[num].text = hp;
