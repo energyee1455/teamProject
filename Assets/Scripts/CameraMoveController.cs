@@ -10,20 +10,38 @@ public class CameraMoveController : MonoBehaviour
     public float yMax;
 
     private Vector3 position;
-    public Transform player;
+
+    private Transform camera;
+    private Transform player;
     private Vector2 playerPos;
 
     private void Start()
     {
         position.z = -1;
+
+        camera = this.transform;
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         playerPos = player.position;
-        if (playerPos.x < xMax && playerPos.x > xMin) position.x = playerPos.x;
-        if (playerPos.y < yMax && playerPos.y > yMin) position.y = playerPos.y;
+
+
+
+        if (playerPos.x < xMax)
+            if (playerPos.x > xMin) position.x = playerPos.x;
+            else position.x = xMin;
+        else position.x = xMax;
+
+        if (playerPos.y < yMax)
+            if(playerPos.y > yMin) position.y = playerPos.y;
+            else position.y = yMin;
+        else position.x = yMax;
+
         this.transform.position = position;
+
         
     }
 }
