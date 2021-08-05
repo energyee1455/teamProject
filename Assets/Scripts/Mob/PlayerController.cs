@@ -41,13 +41,14 @@ public class PlayerController : MobState
 
     }
 
-    //仲間がついてくる機能関係
+    //仲間の追従機能関係
+    //プレイヤーの移動経路格納配列
     public Vector2[] playerTrail = new Vector2[3] {
         new Vector2(0,0),
         new Vector2(0,0),
         new Vector2(0,0)
     };
-    private Vector2 prePos; //前の座標
+    private Vector2 prePos; //移動前の座標
     private int partyMemberNum;  //プレイヤーを除くパーティメンバーの人数
     private float posTh = 1.5f; //移動経路格納における距離の閾値
     void Update()
@@ -80,11 +81,14 @@ public class PlayerController : MobState
         //前回の座標と今の座標の間の距離が閾値より大きい時，プレイヤーの通った座標をずらして格納する
         if (((Vector2)transform.position - prePos).magnitude > posTh)
         {
-            int i = GameManager.instance.PartyMenberNum() - 1;
+            prePos = transform.position;
 
+            int i = GameManager.instance.PartyMenberNum() - 1;
             while (i > 0)
             {
-                playerTrail[i] = playerTrail[i - 1];
+                
+                playerTrail[i].x = playerTrail[i - 1].x;
+                playerTrail[i].y = playerTrail[i - 1].y;
                 i--;
             }
             playerTrail[0].x = transform.position.x;

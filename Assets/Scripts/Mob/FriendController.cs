@@ -51,10 +51,10 @@ public class FriendController : MobState
         Vector2 current = transform.position;
         Vector2 next = playerCon.playerTrail[friendNum - 1];
         Vector2 def = next - current;
-
+        /*
         Debug.Log(friendNum);
         Debug.Log(next);
-
+        */
         if (def.magnitude > warpTh)
         {
             this.transform.position = next;
