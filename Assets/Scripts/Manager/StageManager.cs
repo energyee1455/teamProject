@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Drawing;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -110,11 +111,20 @@ public class StageManager : MonoBehaviour
     {
         stage = nextStage;
         stair = nextDirection;
+
+        playerCon.StopMove();
         if (stage != StageName.None)
         {
             playerCon.GotoFirstPosition(firstPositions[(int)stage * 2 + (int)stair]);
             cameraCon.MoveFloor(cameraLimitaiton[(int)stage]);
         }
+        StartCoroutine(StartStage(3f));
+    }
+
+    IEnumerator StartStage(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        playerCon.StartMove();
     }
 
     

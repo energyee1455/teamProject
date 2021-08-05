@@ -39,6 +39,7 @@ public class PlayerController : MobState
         friendNum =  GameManager.instance.AddToFriendStateList(this, true);
         ShowHp();
 
+        state = State.Normal;
     }
 
     //仲間の追従機能関係
@@ -50,11 +51,16 @@ public class PlayerController : MobState
     };
     private Vector2 prePos; //移動前の座標
     private int partyMemberNum;  //プレイヤーを除くパーティメンバーの人数
-    private float posTh = 1.5f; //移動経路格納における距離の閾値
+    private float posTh = 1f; //移動経路格納における距離の閾値
+
     void Update()
     {
         // x,ｙの入力値を得る
-        GetInput();
+        if(state == State.Normal || state == State.Damaged)
+        {
+            GetInput();
+        }
+        
     }
     void FixedUpdate()
     {
@@ -86,7 +92,6 @@ public class PlayerController : MobState
             int i = GameManager.instance.PartyMenberNum() - 1;
             while (i > 0)
             {
-                
                 playerTrail[i].x = playerTrail[i - 1].x;
                 playerTrail[i].y = playerTrail[i - 1].y;
                 i--;
@@ -128,5 +133,14 @@ public class PlayerController : MobState
     {
         transform.position = new Vector2(position[0], position[1]);
         prePos = transform.position;
+    }
+
+    public void StopMove()
+    {
+        state = State.Stop;
+    }
+    public void StartMove()
+    {
+        state = State.Normal;
     }
 }
