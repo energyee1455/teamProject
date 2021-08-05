@@ -6,8 +6,7 @@ using UnityEngine;
 public class PlayerController : MobState
 {
     //動き用の変数
-    [SerializeField]
-    readonly float moveSpeed = 3.0f;
+    private float moveSpeed = 2f;
     private Rigidbody2D rigidBody;
     private Vector2 inputAxis;
 
@@ -32,7 +31,6 @@ public class PlayerController : MobState
         //フロア1の初期座標へ移動
         GotoFirstPosition(StageManager.instance.GetFirstPosition());
 
-
         canAttack = true;
 
         //HPをセット<後から変更>
@@ -50,72 +48,50 @@ public class PlayerController : MobState
         new Vector2(0,0)
     };
     private Vector2 prePos; //前の座標
-    private int partyMemberNum = 2;  //プレイヤーを除くパーティメンバーの人数
-    private float posTh = 2f; //距離の閾値
-
-    /*
-    IEnumerator SetTrail()
-    {
-        int i = 0;
-        int j;
-        while (true)
-        {
-            //前回の座標と今の座標の間の距離が閾値より大きい時，プレイヤーの通った座標の格納をずらす
-            if(((Vector2)transform.position - prePos).magnitude > posTh)
-            {
-                if(i < partyMemberNum) i++;
-                j = i;
-                while(j > 0)
-                {
-                    playerTrail[j] = playerTrail[j-1];
-                    j--;
-                }
-                playerTrail[0].x = transform.position.x;
-                playerTrail[0].y = transform.position.y;
-            }
-            yield return new WaitForSeconds(0.1f);
-        }
-    }
-    */
-
-
-    private void SetTrail()
-    {
-        int i = 0;
-        int j;
-        //前回の座標と今の座標の間の距離が閾値より大きい時，プレイヤーの通った座標の格納をずらす
-        if (((Vector2)transform.position - prePos).magnitude > posTh)
-        {
-            if (i < partyMemberNum) i++;
-            j = i;
-            while (j > 0)
-            {
-                playerTrail[j] = playerTrail[j - 1];
-                j--;
-            }
-            playerTrail[0].x = transform.position.x;
-            playerTrail[0].y = transform.position.y;
-        }
-    }
-
+    private int partyMemberNum;  //プレイヤーを除くパーティメンバーの人数
+    private float posTh = 1.5f; //移動経路格納における距離の閾値
     void Update()
     {
         // x,ｙの入力値を得る
         GetInput();
     }
-
     void FixedUpdate()
     {
+        //移動と移動経路格納
         Move();
         SetTrail();
     }
 
+    //キー入力を取得
+    private void GetInput()
+    {
+        inputAxis.x = Input.GetAxis("Horizontal");
+        inputAxis.y = Input.GetAxis("Vertical");
+    }
+    //入力から移動
     protected override void Move()
     {
         // 速度を代入する
         rigidBody.velocity = inputAxis.normalized * moveSpeed;
     }
+    //移動経路の格納
+    private void SetTrail()
+    { 
+        //前回の座標と今の座標の間の距離が閾値より大きい時，プレイヤーの通った座標をずらして格納する
+        if (((Vector2)transform.position - prePos).magnitude > posTh)
+        {
+            int i = GameManager.instance.PartyMenberNum() - 1;
 
+            while (i > 0)
+            {
+                playerTrail[i] = playerTrail[i - 1];
+                i--;
+            }
+            playerTrail[0].x = transform.position.x;
+            playerTrail[0].y = transform.position.y;
+        }
+    }
+    
     protected override void Attack()
     {
         if (canAttack)
@@ -149,12 +125,4 @@ public class PlayerController : MobState
         transform.position = new Vector2(position[0], position[1]);
         prePos = transform.position;
     }
-
-    //キー入力を取得
-    private void GetInput()
-    {
-        inputAxis.x = Input.GetAxis("Horizontal");
-        inputAxis.y = Input.GetAxis("Vertical");
-    }
-    
 }

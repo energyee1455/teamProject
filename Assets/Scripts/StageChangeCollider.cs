@@ -1,6 +1,6 @@
 using UnityEngine;
 
-//??????????????
+//ステージ移動のためのコライダー
 public class StageChangeCollider: MonoBehaviour
 {
     public StageManager.StageName nextStage;
@@ -10,7 +10,15 @@ public class StageChangeCollider: MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            StageManager.instance.MoveStage(nextStage, nextDirection);
+            StageManager.instance.PrepareToMoveStage(nextStage, nextDirection);
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            StageManager.instance.Cancel();
         }
     }
 }
