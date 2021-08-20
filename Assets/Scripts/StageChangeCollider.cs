@@ -3,14 +3,14 @@ using UnityEngine;
 //ステージ移動のためのコライダー
 public class StageChangeCollider: MonoBehaviour
 {
-    public StageManager.StageName nextStage;
+    public StageManager.FloorName nextFloor;
     public StageManager.StairDirection nextDirection;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            StageManager.instance.PrepareToMoveStage(nextStage, nextDirection);
+            StageManager.instance.PrepareToMoveStage(nextFloor, nextDirection);
         }
     }
 
@@ -21,4 +21,5 @@ public class StageChangeCollider: MonoBehaviour
             StageManager.instance.Cancel();
         }
     }
+
 }

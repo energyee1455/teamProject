@@ -5,7 +5,7 @@ using UnityEngine;
 public class SimpleEnemyConttoller : MobState
 {
     [SerializeField] private float moveSpeed = 5f; //移動速度
-    private Rigidbody2D rigidbody;
+    private Rigidbody2D rb;
 
     enum MoveDirection
     {
@@ -16,7 +16,7 @@ public class SimpleEnemyConttoller : MobState
 
     private void Start()
     {
-        rigidbody = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
         direction = MoveDirection.Right;
         Move();
     }
@@ -46,7 +46,7 @@ public class SimpleEnemyConttoller : MobState
     {
         if (direction == MoveDirection.Right) direction = MoveDirection.Left;
         else direction = MoveDirection.Right;
-        rigidbody.velocity = new Vector2(moveSpeed * (int)direction, 0);
+        rb.velocity = new Vector2(moveSpeed * (int)direction, 0);
     }
 
 

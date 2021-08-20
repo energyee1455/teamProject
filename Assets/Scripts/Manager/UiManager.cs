@@ -30,7 +30,7 @@ public class UiManager : MonoBehaviour
     private void Start()
     {
         //ステージの名前を表示
-        stageName.text = StageManager.instance.Stage().ToString();
+        //stageName.text = StageManager.instance.Stage().ToString();
     }
 
     //HPを表示

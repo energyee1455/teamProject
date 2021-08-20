@@ -9,8 +9,6 @@ public class PlayerController : MobState
     private float moveSpeed = 2f;
     private Rigidbody2D rigidBody;
     private Vector2 inputAxis;
-
-    private int friendNum; //パーティー内での順番
     private int firstHp = 250;   //初期HP
 
     //プレイヤーキャラが向いている方向
@@ -28,28 +26,29 @@ public class PlayerController : MobState
         // 衝突時にobjectを回転させない設定(スクリプトに書いてなくてもいい)
         rigidBody.constraints = RigidbodyConstraints2D.FreezeRotation;
 
-        //フロア1の初期座標へ移動
-        GotoFirstPosition(StageManager.instance.GetFirstPosition());
-
-        canAttack = true;
 
         //HPをセット<後から変更>
         //ステージ跨ぎする場合の処理を，PartyManagerで実装
         Hp = firstHp;
-        friendNum =  GameManager.instance.AddToFriendStateList(this, true);
-        ShowHp();
 
         state = State.Normal;
+        canAttack = true;
+
+        //パーティー関連
+        gameManager = GameManager.instance;
+        if (gameManager.stage == GameManager.Stage.Field) gameManager.AddPartyMember();
+        partyMemberNum = gameManager.partyMenberNum;
     }
 
     //仲間の追従機能関係
     //プレイヤーの移動経路格納配列
     public Vector2[] playerTrail = new Vector2[3] {
-        new Vector2(0,0),
-        new Vector2(0,0),
-        new Vector2(0,0)
+        new Vector2(-10,-10),
+        new Vector2(-10,-10),
+        new Vector2(-10,-10)
     };
     private Vector2 prePos; //移動前の座標
+    private GameManager gameManager;
     private int partyMemberNum;  //プレイヤーを除くパーティメンバーの人数
     private float posTh = 1f; //移動経路格納における距離の閾値
 
@@ -66,9 +65,9 @@ public class PlayerController : MobState
     {
         //移動と移動経路格納
         Move();
-        SetTrail();
+        if(partyMemberNum > 0) SetTrail();
     }
-
+    
     //キー入力を取得
     private void GetInput()
     {
@@ -88,8 +87,7 @@ public class PlayerController : MobState
         if (((Vector2)transform.position - prePos).magnitude > posTh)
         {
             prePos = transform.position;
-
-            int i = GameManager.instance.PartyMenberNum() - 1;
+            int i = partyMemberNum-1;
             while (i > 0)
             {
                 playerTrail[i].x = playerTrail[i - 1].x;
@@ -117,18 +115,20 @@ public class PlayerController : MobState
         {
             state = State.Damaged;
             Hp = (Hp - damage);
-            ShowHp();
+            //ShowHp();
         }
     }
 
+    /*
     //HPのUIを更新(後で削除するかも)
     void ShowHp()
     {
         string hpText = Hp.ToString() + " / " + firstHp.ToString();
         UiManager.instance.SetHpUi(friendNum, hpText);
     }
+    */
 
-    //ステージでの初期位置に移動　←　StageManager.Move()
+    //フロア移動
     public void GotoFirstPosition(int[] position)
     {
         transform.position = new Vector2(position[0], position[1]);

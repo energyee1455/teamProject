@@ -18,26 +18,16 @@ public class FriendController : MobState
         rigidBody = GetComponent<Rigidbody2D>();
         // 衝突時にobjectを回転させない設定(スクリプトに書いてなくてもいい)
         rigidBody.constraints = RigidbodyConstraints2D.FreezeRotation;
-        //ステージの初期座標を取得
-        SetFirstPosition(StageManager.instance.GetFirstPosition());
 
         //プレイヤークラスを取得
         playerCon = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
         playerCon.playerTrail[0] = this.transform.position;
 
-        //パーティーに登録
-        friendNum = GameManager.instance.AddToFriendStateList(this, false);
-
         //HPをセット<後から変更>
         //ステージ跨ぎする場合の処理を，PartyManagerで実装
         Hp = firstHp;
-        ShowHp();
         canAttack = true;
-    }
 
-    void Update()
-    {
-        
     }
 
     private void FixedUpdate()
@@ -49,7 +39,7 @@ public class FriendController : MobState
     {
         // プレイヤーに追従する
         Vector2 current = transform.position;
-        Vector2 next = playerCon.playerTrail[friendNum - 1];
+        Vector2 next = playerCon.playerTrail[friendNum];
         Vector2 def = next - current;
 
         if (def.magnitude > warpTh)

@@ -18,6 +18,7 @@ public class StageManager : MonoBehaviour
         new int[]{-7, 30},
         new int[]{8, 37}
     };
+
     //各フロアのカメラ移動制限
     private float[][] cameraLimitaiton = new float[3][]
     {
@@ -25,30 +26,37 @@ public class StageManager : MonoBehaviour
         new float[]{0, 0, 15, 19},
         new float[]{0, 0, 32, 36}
     };
+
     //各フロアの名前
-    public enum StageName
+    public enum FloorName
     {
         Floor1 = 0,
         Floor2 = 1,
         Floor3 = 2,
+
+        NextStage,
+        PrevStage,
         None
     }
+
     //階段の向き
     public enum StairDirection
     {
         Up = 1,
         Down = 0
     }
-    //現在のステージ，向きと次のステージ，向き
-    private StageName stage;
+    //現在のフロア/向きと次のフロア/向き
+    
+    private FloorName floor;
     private StairDirection stair;
-    private StageName nextStage;
+    private FloorName nextFloor;
     private StairDirection nextDirection;
-    public StageName Stage() { return this.stage; }
+
 
     //ステージにおけるプレイヤーとカメラの位置設定用
     private PlayerController playerCon;
     private CameraController cameraCon;
+    private GameManager gameManager;
 
     //フロア移動のキー入力を受け取るかどうか
     private bool getMoveKey;
@@ -61,43 +69,62 @@ public class StageManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            stage = StageName.Floor1;
-            stair = StairDirection.Down;
         }
-        else Destroy(this);
     }
 
     private void Start()
     {
+        gameManager = GameManager.instance;
         playerCon = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
         cameraCon = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>();
-        SetFirstCameraPotision();
+        //休憩エリアでなければ初期位置を指定
+        if (gameManager.stage != GameManager.Stage.RestArea)
+        {
+            //次のステージに進んだ場合 
+            if (gameManager.isRising)
+            {
+                floor = FloorName.Floor1;
+                stair = StairDirection.Down;
+            }
+            //前のステージに戻った場合
+            else
+            {
+                floor = FloorName.Floor3;
+                stair = StairDirection.Up;
+            }
+            
+            playerCon.GotoFirstPosition(firstPositions[(int)floor * 2 + (int)stair]);
+            SetFirstCameraPotision();
+        }       
     }
+
     private void Update()
     {
+        //Mキーでフロア，ステージを移動
         if (Input.GetKeyDown(KeyCode.M))
         {
             if (getMoveKey) MoveStage();
         }
     }
 
+
     //フロアの初期位置を取得
-    public int[] GetFirstPosition()
+    public int[] GetFirstPlayerPosition()
     {
-        return firstPositions[(int)stage * 2 + (int)stair];
+        return firstPositions[(int)floor * 2 + (int)stair];
     }
 
     private void SetFirstCameraPotision()
     {
-        cameraCon.MoveFloor(cameraLimitaiton[(int)stage]);
+        cameraCon.MoveFloor(cameraLimitaiton[(int)floor]);
     }
 
     //フロアの移動準備
-    public void PrepareToMoveStage(StageName stageName, StairDirection stairDirection)
+    public void PrepareToMoveStage(FloorName floorName, StairDirection stairDirection)
     {
         getMoveKey = true;
         UiManager.instance.ShowMessage("Press [M]");
-        nextStage = stageName;
+        nextFloor = floorName;
         nextDirection = stairDirection;
     }
     //フロア移動のキャンセル
@@ -109,19 +136,44 @@ public class StageManager : MonoBehaviour
     //フロアの移動
     private void MoveStage()
     {
-        stage = nextStage;
+        floor = nextFloor;
         stair = nextDirection;
 
-        playerCon.StopMove();
-        if (stage != StageName.None)
+        if (floor == FloorName.None) return;
+        //playerCon.StopMove();
+        if(gameManager.stage == GameManager.Stage.RestArea)
         {
-            playerCon.GotoFirstPosition(firstPositions[(int)stage * 2 + (int)stair]);
-            cameraCon.MoveFloor(cameraLimitaiton[(int)stage]);
+            if (floor == FloorName.NextStage)
+            {
+                gameManager.GotoField(true);
+            }
+            else if (floor == FloorName.PrevStage)
+            {
+                gameManager.GotoField(false);
+            }
         }
-        StartCoroutine(StartStage(3f));
+        else
+        {
+            if (floor == FloorName.NextStage)
+            {
+                gameManager.GotoNextStage();
+            }
+            else if (floor == FloorName.PrevStage)
+            {
+                gameManager.GotoPrevStage();
+            }
+            else
+            {
+                playerCon.GotoFirstPosition(firstPositions[(int)floor * 2 + (int)stair]);
+                cameraCon.MoveFloor(cameraLimitaiton[(int)floor]);
+            }
+        }
+        
+        
+        //StartCoroutine(StartFloor(3f));
     }
 
-    IEnumerator StartStage(float seconds)
+    IEnumerator StartFloor(float seconds)
     {
         yield return new WaitForSeconds(seconds);
         playerCon.StartMove();
