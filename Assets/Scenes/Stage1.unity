@@ -6009,6 +6009,8 @@ MonoBehaviour:
   - {x: 0, y: 0}
   - {x: 0, y: 0}
   - {x: 0, y: 0}
+  damageObject: {fileID: 7529854562638681699, guid: df51b778812ae435b9cd00b52d0095e0,
+    type: 3}
 --- !u!114 &885383790
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13319,6 +13321,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   moveSpeed: 2
+  enemyHpviewObject: {fileID: 0}
+  firstHP: 100
 --- !u!50 &1735718271
 Rigidbody2D:
   serializedVersion: 4

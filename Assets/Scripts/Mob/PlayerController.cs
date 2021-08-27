@@ -11,21 +11,11 @@ public class PlayerController : MobState
     private Vector2 inputAxis;
     private int firstHp = 250;   //初期HP
 
-    //プレイヤーキャラが向いている方向
-    private enum PointerDirection
-    {
-        Right,
-        Left,
-        Up,
-        Down
-    }
-
     void Start()
     {
         rigidBody = GetComponent<Rigidbody2D>();
         // 衝突時にobjectを回転させない設定(スクリプトに書いてなくてもいい)
         rigidBody.constraints = RigidbodyConstraints2D.FreezeRotation;
-
 
         //HPをセット<後から変更>
         //ステージ跨ぎする場合の処理を，PartyManagerで実装
@@ -52,6 +42,8 @@ public class PlayerController : MobState
     private int partyMemberNum;  //プレイヤーを除くパーティメンバーの人数
     private float posTh = 1f; //移動経路格納における距離の閾値
 
+    public GameObject damageObject;
+
     void Update()
     {
         // x,ｙの入力値を得る
@@ -73,6 +65,11 @@ public class PlayerController : MobState
     {
         inputAxis.x = Input.GetAxis("Horizontal");
         inputAxis.y = Input.GetAxis("Vertical");
+
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            Attack(damageObject);
+        }
     }
     //入力から移動
     protected override void Move()
@@ -98,12 +95,21 @@ public class PlayerController : MobState
             playerTrail[0].y = transform.position.y;
         }
     }
-    
-    protected override void Attack()
+
+    //攻撃はこの中に書く
+    protected override void Attack(GameObject damageObject)
     {
         if (canAttack)
         {
-            
+            GameObject copied = Object.Instantiate(damageObject) as GameObject;
+            copied.transform.position = this.gameObject.transform.position;
+
+            Vector3 pd = Camera.main.ScreenToWorldPoint(Input.mousePosition) - this.transform.position; //エビ→カーソル方向のベクトル
+            Vector3 pn = pd.normalized; //正規化
+
+            float angle = Vector3.Angle(new Vector3(0, 1, 0), pn);
+            if (pn.x > 0) angle = -angle;
+            copied.transform.rotation = Quaternion.Euler(this.transform.rotation.x, this.transform.rotation.y, angle);
         }
     }
 

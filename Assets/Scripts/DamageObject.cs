@@ -3,6 +3,7 @@ using UnityEngine;
 //?????????????????????
 public class DamageObject : MonoBehaviour
 {
+    public float speed = 0.1f;
     //??????
     public enum MobType
     {
@@ -10,7 +11,7 @@ public class DamageObject : MonoBehaviour
         Enemy = 1
     }
     public MobType mobType;
-    //???????
+    //ダメージ数
     public int damageValue = 10;
     //????
     public float existenceTimeSeconds = 5.0f;
@@ -19,13 +20,20 @@ public class DamageObject : MonoBehaviour
     {
         Invoke("DeleteObject", existenceTimeSeconds);
     }
+
+    private void Update()
+    {
+        //弾の動き
+        this.gameObject.transform.position += this.gameObject.transform.up * speed;
+    }
+
     //?????????
     private void DeleteObject()
     {
-        Destroy(this);
+        Destroy(this.gameObject);
     }
 
-    //???????????????????????
+    //弾の当たり判定
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))

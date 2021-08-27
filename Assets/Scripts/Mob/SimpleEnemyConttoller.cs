@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody2D))]
 //敵キャラの制御クラス
@@ -7,15 +8,25 @@ public class SimpleEnemyConttoller : MobState
     [SerializeField] private float moveSpeed = 5f; //移動速度
     private Rigidbody2D rb;
 
+    public GameObject enemyHpviewObject;
+    Slider hpview;
+    public int firstHP = 100;
+
     enum MoveDirection
     {
         Right = 1,
         Left = -1
     }
+
     MoveDirection direction;
 
     private void Start()
     {
+        //HP表示
+        hpview = enemyHpviewObject.GetComponent<Slider>();
+        Hp = firstHP;
+        hpview.maxValue = firstHP;
+
         rb = GetComponent<Rigidbody2D>();
         direction = MoveDirection.Right;
         Move();
@@ -27,16 +38,19 @@ public class SimpleEnemyConttoller : MobState
         int damage = damageValue - damageCut;
         if (damage > 0)
         {
+            enemyHpviewObject.SetActive(true);
             state = State.Damaged;
             Hp -= damage;
-            if(Hp <= 0)
+            hpview.value = Hp;
+
+            if (Hp <= 0)
             {
                 state = State.Die;
             }
         }
     }
 
-    protected override void Attack()
+    protected override void Attack(GameObject damageObfect)
     {
         throw new System.NotImplementedException();
     }

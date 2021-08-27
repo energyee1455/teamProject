@@ -1,9 +1,9 @@
 using UnityEngine;
 
-//キャラクターの基本クラス
+//?L?????N?^?[?????{?N???X
 public abstract class MobState : MonoBehaviour
 {
-    //状態
+    //????
     public enum State{
         Stop,
         Normal,
@@ -14,12 +14,12 @@ public abstract class MobState : MonoBehaviour
     
     protected int Hp { set; get; }
     protected bool canAttack;
-    protected float attackSpace{ set; get; } //攻撃間隔
+    protected float attackSpace{ set; get; } //?U?????u
 
-    //継承クラスで実装s
-    protected abstract void Attack();
+    //?p???N???X??????s
+    protected abstract void Attack(GameObject damageObfect);
     protected abstract void Move();
 
-    //攻撃を受けた時の処理
+    //?U??????????????????
     public abstract void Attacked(int damageValue);
 }

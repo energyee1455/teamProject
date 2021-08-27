@@ -57,7 +57,7 @@ public class FriendController : MobState
     }
 
 
-    protected override void Attack()
+    protected override void Attack(GameObject damageObfect)
     {
         if (canAttack)
         {
