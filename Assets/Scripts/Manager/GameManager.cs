@@ -91,7 +91,6 @@ public class GameManager : MonoBehaviour
     public GameObject friendObject;
     public void AddPartyMember()
     {
-        Debug.Log(partyMenberNum);
         for (int i=0; i<partyMenberNum; i++)
         {
             Debug.Log("instantiate");
@@ -101,5 +100,5 @@ public class GameManager : MonoBehaviour
         }  
     }
 
-
+    
 }

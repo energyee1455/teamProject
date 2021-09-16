@@ -15,9 +15,12 @@ public abstract class MobState : MonoBehaviour
     protected int Hp { set; get; }
     protected bool canAttack;
     protected float attackSpace{ set; get; } //?U?????u
+    public Transform target;
 
     //?p???N???X??????s
     protected abstract void Attack(GameObject damageObfect);
+    
+
     protected abstract void Move();
 
     //?U??????????????????

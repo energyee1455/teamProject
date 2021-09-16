@@ -3,7 +3,7 @@ using UnityEngine;
 //?????????????????????
 public class DamageObject : MonoBehaviour
 {
-    public float speed = 0.1f;
+    public float speed = 0.3f;
     //??????
     public enum MobType
     {
@@ -16,15 +16,19 @@ public class DamageObject : MonoBehaviour
     //????
     public float existenceTimeSeconds = 5.0f;
 
+    private Rigidbody2D rb;
+
     private void Start()
     {
         Invoke("DeleteObject", existenceTimeSeconds);
+        //rb = GetComponent<Rigidbody2D>();
     }
 
     private void Update()
     {
         //弾の動き
         this.gameObject.transform.position += this.gameObject.transform.up * speed;
+        //rb.velocity = this.gameObject.transform.forward * speed;
     }
 
     //?????????
@@ -34,22 +38,39 @@ public class DamageObject : MonoBehaviour
     }
 
     //弾の当たり判定
-    private void OnCollisionEnter2D(Collision2D collision)
+
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            if(mobType == MobType.Friends)
+            if (mobType == MobType.Friends)
             {
                 collision.gameObject.GetComponent<MobState>().Attacked(damageValue);
-            }  
+                DeleteObject();
+            }
         }
+
         if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("Friend"))
         {
             if (mobType == MobType.Enemy)
             {
                 collision.gameObject.GetComponent<MobState>().Attacked(damageValue);
+                DeleteObject();
             }
         }
+
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            Debug.Log("OK");
+            DeleteObject();
+        }
+    }
+
+    private void OnCollisionEnter2D()
+    {
+        Debug.Log("collision");
         DeleteObject();
     }
+
+
 }
