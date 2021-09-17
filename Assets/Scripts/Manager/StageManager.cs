@@ -5,10 +5,10 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
-//ステージ管理クラス
+//?X?e?[?W?????N???X
 public class StageManager : MonoBehaviour
 {
-    //フロアの初期位置
+    //?t???A?????????u
     private int[][] firstPositions = new int[6][]
     {
         new int[]{-7, -5}, 
@@ -19,7 +19,7 @@ public class StageManager : MonoBehaviour
         new int[]{8, 37}
     };
 
-    //各フロアのカメラ移動制限
+    //?e?t???A???J????????????
     private float[][] cameraLimitaiton = new float[3][]
     {
         new float[]{0, 0, -2, 2},
@@ -27,7 +27,7 @@ public class StageManager : MonoBehaviour
         new float[]{0, 0, 32, 36}
     };
 
-    //各フロアの名前
+    //?e?t???A?????O
     public enum FloorName
     {
         Floor1 = 0,
@@ -36,16 +36,17 @@ public class StageManager : MonoBehaviour
 
         NextStage,
         PrevStage,
+        Clear,
         None
     }
 
-    //階段の向き
+    //?K?i??????
     public enum StairDirection
     {
         Up = 1,
         Down = 0
     }
-    //現在のフロア/向きと次のフロア/向き
+    //???????t???A/???????????t???A/????
     
     private FloorName floor;
     private StairDirection stair;
@@ -53,17 +54,17 @@ public class StageManager : MonoBehaviour
     private StairDirection nextDirection;
 
 
-    //ステージにおけるプレイヤーとカメラの位置設定用
+    //?X?e?[?W?????????v???C???[???J?????????u?????p
     private PlayerController playerCon;
     private CameraController cameraCon;
     private GameManager gameManager;
 
-    //フロア移動のキー入力を受け取るかどうか
+    //?t???A???????L?[??????????????????????
     private bool getMoveKey;
 
-    //インスタンス
+    //?C???X?^???X
     public static StageManager instance;
-    //インスタンスの生成
+    //?C???X?^???X??????
     private void Awake()
     {
         if (instance == null)
@@ -77,16 +78,16 @@ public class StageManager : MonoBehaviour
         gameManager = GameManager.instance;
         playerCon = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
         cameraCon = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>();
-        //休憩エリアでなければ初期位置を指定
+        //?x?e?G???A?????????????????u???w??
         if (gameManager.stage != GameManager.Stage.RestArea)
         {
-            //次のステージに進んだ場合 
+            //?????X?e?[?W???i???????? 
             if (gameManager.isRising)
             {
                 floor = FloorName.Floor1;
                 stair = StairDirection.Down;
             }
-            //前のステージに戻った場合
+            //?O???X?e?[?W????????????
             else
             {
                 floor = FloorName.Floor3;
@@ -100,7 +101,7 @@ public class StageManager : MonoBehaviour
 
     private void Update()
     {
-        //Mキーでフロア，ステージを移動
+        //M?L?[???t???A?C?X?e?[?W??????
         if (Input.GetKeyDown(KeyCode.M))
         {
             if (getMoveKey) MoveStage();
@@ -108,7 +109,7 @@ public class StageManager : MonoBehaviour
     }
 
 
-    //フロアの初期位置を取得
+    //?t???A?????????u??????
     public int[] GetFirstPlayerPosition()
     {
         return firstPositions[(int)floor * 2 + (int)stair];
@@ -119,7 +120,7 @@ public class StageManager : MonoBehaviour
         cameraCon.MoveFloor(cameraLimitaiton[(int)floor]);
     }
 
-    //フロアの移動準備
+    //?t???A??????????
     public void PrepareToMoveStage(FloorName floorName, StairDirection stairDirection)
     {
         getMoveKey = true;
@@ -127,17 +128,22 @@ public class StageManager : MonoBehaviour
         nextFloor = floorName;
         nextDirection = stairDirection;
     }
-    //フロア移動のキャンセル
+    //?t???A???????L?????Z??
     public void Cancel()
     {
         getMoveKey = false;
         UiManager.instance.HideMessage();
     }
-    //フロアの移動
+    //?t???A??????
     private void MoveStage()
     {
         floor = nextFloor;
         stair = nextDirection;
+
+        if(floor == FloorName.Clear)
+        {
+            SceneManager.LoadScene("Clear");
+        }
 
         if (floor == FloorName.None) return;
         //playerCon.StopMove();

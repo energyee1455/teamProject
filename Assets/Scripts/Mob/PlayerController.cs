@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 //プレイヤーのコントロールクラス
 [RequireComponent(typeof(Rigidbody2D))]
@@ -10,6 +11,21 @@ public class PlayerController : MobState
     private Rigidbody2D rigidBody;
     private Vector2 inputAxis;
     private int firstHp = 250;   //初期HP
+    //HP表示用
+    public GameObject HpviewObject;
+    Slider hpview;
+
+    //仲間の追従機能関係
+    //プレイヤーの移動経路格納配列
+    public Vector2[] playerTrail;
+
+    private Vector2 prePos; //移動前の座標
+    private GameManager gameManager;
+    private int partyMemberNum;  //プレイヤーを除くパーティメンバーの人数
+    private float posTh = 1f; //移動経路格納における距離の閾値
+
+    //攻撃用オブジェクト
+    public GameObject damageObject;
 
     void Start()
     {
@@ -20,29 +36,30 @@ public class PlayerController : MobState
         //HPをセット<後から変更>
         //ステージ跨ぎする場合の処理を，PartyManagerで実装
         Hp = firstHp;
-
         state = State.Normal;
         canAttack = true;
 
-        //パーティー関連
+        //フィールドだった時の処理
         gameManager = GameManager.instance;
-        if (gameManager.stage == GameManager.Stage.Field) gameManager.AddPartyMember();
+        if (gameManager.stage == GameManager.Stage.Field)
+        {
+            gameManager.AddPartyMember();
+            //HP表示
+            hpview = HpviewObject.GetComponent<Slider>();
+            Hp = firstHp;
+            hpview.maxValue = firstHp;
+            hpview.value = firstHp;
+        }
+
         partyMemberNum = gameManager.partyMenberNum;
+
+        //とりあえず最初は味方が見えないようにステージ外に設定
+        playerTrail= new Vector2[3]{
+            new Vector2(-10, -10),
+            new Vector2(-10, -10),
+            new Vector2(-10, -10)
+        };
     }
-
-    //仲間の追従機能関係
-    //プレイヤーの移動経路格納配列
-    public Vector2[] playerTrail = new Vector2[3] {
-        new Vector2(-10,-10),
-        new Vector2(-10,-10),
-        new Vector2(-10,-10)
-    };
-    private Vector2 prePos; //移動前の座標
-    private GameManager gameManager;
-    private int partyMemberNum;  //プレイヤーを除くパーティメンバーの人数
-    private float posTh = 1f; //移動経路格納における距離の閾値
-
-    public GameObject damageObject;
 
     void Update()
     {
@@ -91,6 +108,7 @@ public class PlayerController : MobState
                 playerTrail[i].y = playerTrail[i - 1].y;
                 i--;
             }
+            Debug.Log("set");
             playerTrail[0].x = transform.position.x;
             playerTrail[0].y = transform.position.y;
         }
@@ -117,22 +135,20 @@ public class PlayerController : MobState
     {
         int damageCut = 0;//ステータスから取得
         int damage = damageValue - damageCut;
-        if(damage > 0)
+        if (damage > 0)
         {
+            HpviewObject.SetActive(true);
             state = State.Damaged;
-            Hp = (Hp - damage);
-            //ShowHp();
+            Hp -= damage;
+            hpview.value = Hp;
+
+            if (Hp <= 0)
+            {
+                state = State.Die;
+            }
         }
     }
-
-    /*
-    //HPのUIを更新(後で削除するかも)
-    void ShowHp()
-    {
-        string hpText = Hp.ToString() + " / " + firstHp.ToString();
-        UiManager.instance.SetHpUi(friendNum, hpText);
-    }
-    */
+    
 
     //フロア移動
     public void GotoFirstPosition(int[] position)

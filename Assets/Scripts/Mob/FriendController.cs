@@ -1,14 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FriendController : MobState
 {
     private Rigidbody2D rigidBody;
 
     public int friendNum; //パーティー内での順番
-    private int firstHp = 220;   //初期HP
 
+    //HP変数と表示用
+    private int firstHp = 220;   //初期HP
+    public GameObject HpviewObject;
+    Slider hpview;
+
+    //移動用のプレイヤーコントローラ
     private PlayerController playerCon;
     private float warpTh = 6;
     private float moveTh = 1f;
@@ -25,13 +31,16 @@ public class FriendController : MobState
 
         //プレイヤークラスを取得
         playerCon = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
-        //playerCon.playerTrail[0] = this.transform.position;
 
-        //HPをセット<後から変更>
-        //ステージ跨ぎする場合の処理を，PartyManagerで実装
+        //HP表示
+        hpview = HpviewObject.GetComponent<Slider>();
         Hp = firstHp;
-        canAttack = true;
+        hpview.maxValue = firstHp;
+        hpview.value = firstHp;
 
+        //ステージ跨ぎする場合の処理を，PartyManagerで実装
+        canAttack = true;
+        //攻撃処理のループ
         StartCoroutine(AttackCoroutine());
     }
 
@@ -89,23 +98,16 @@ public class FriendController : MobState
         int damage = damageValue - damageCut;
         if (damage > 0)
         {
+            HpviewObject.SetActive(true);
             state = State.Damaged;
-            Hp = (Hp - damage);
-            ShowHp();
+            Hp -= damage;
+            hpview.value = Hp;
+
+            if (Hp <= 0)
+            {
+                state = State.Die;
+            }
         }
-    }
-
-    //HPのUIを更新(後で削除するかも)
-    void ShowHp()
-    {
-        string hpText = Hp.ToString() + " / " + firstHp.ToString();
-        UiManager.instance.SetHpUi(friendNum, hpText);
-    }
-
-    //ステージでの初期位置を設定
-    private void SetFirstPosition(int[] position)
-    {
-        transform.position = new Vector2(position[0], position[1]);
     }
 
 }

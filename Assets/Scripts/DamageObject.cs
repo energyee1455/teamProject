@@ -61,14 +61,12 @@ public class DamageObject : MonoBehaviour
 
         if (collision.gameObject.CompareTag("Wall"))
         {
-            Debug.Log("OK");
             DeleteObject();
         }
     }
 
     private void OnCollisionEnter2D()
     {
-        Debug.Log("collision");
         DeleteObject();
     }
 

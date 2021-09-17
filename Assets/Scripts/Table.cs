@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class Table : MonoBehaviour
 {
     public GameObject Menu;
-    public GameObject decisionButton;
     private int memberNum = 0;
     public Text numText;
 
@@ -30,7 +29,7 @@ public class Table : MonoBehaviour
     public void OnMemberNumButton()
     {
         memberNum++;
-        numText.text = memberNum.ToString() + "êl";
+        numText.text = memberNum.ToString();
     }
 
 
